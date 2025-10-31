@@ -1,0 +1,59 @@
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.geometry.Pos;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
+public class Rules {
+    // RulesScene: changes scene to show rules
+    public Scene RulesScene(Stage secondaryStage){
+
+        BorderPane rulesBP = new BorderPane();
+        rulesBP.setStyle(NewLook.BorderPaneBg);
+        
+        Text t1 = new Text("KENO");
+		t1.setFont(Font.font("Veneer Solid", FontWeight.EXTRA_BOLD, 100)); 
+
+		t1.setFill(NewLook.lightDark);
+		
+		Text t2 = new Text("RULES");
+		t2.setFont(Font.font("", FontWeight.BOLD, 20));                     
+
+		t2.setFill(NewLook.TitleColor);
+
+		VBox Heading = new VBox(t1, t2);
+		Heading.setAlignment(Pos.CENTER);
+		Heading.setSpacing(6);
+
+        Text rule1 = new Text("1. Choose how many 'spots' to gamble on the board.");
+        Text rule1p5 = new Text("(*Note: Choose 'Auto Select' if you want the computer to choose your spots)");
+        Text rule2 = new Text("2. Choose how many 'draws' (the selection of 20 random spots) should be made.");
+        Text rule3 = new Text("3. Feel free to change your choices, then press 'Ready! to access the board.");
+        Text rule4 = new Text("4. Select however many spots you agreed to before pressing 'Ready!'");
+        Text rule4p5 = new Text("(*Note: Skip this step if you chose 'Auto Select')");
+        Text rule5 = new Text("5. When satisfied, cick 'Draw!' for drawing to begin.");
+        Text rule6 = new Text("6. If you selected multiple drawings, then click 'Continue' to progress to next one.");
+        
+
+        rule1.setFill(NewLook.ContentTextColor);
+        rule1p5.setFill(NewLook.ContentTextColor);
+        rule2.setFill(NewLook.ContentTextColor);
+        rule3.setFill(NewLook.ContentTextColor);
+        rule4.setFill(NewLook.ContentTextColor);
+        rule4p5.setFill(NewLook.ContentTextColor);
+        rule5.setFill(NewLook.ContentTextColor);
+        rule6.setFill(NewLook.ContentTextColor);
+
+        VBox allRules = new VBox( Heading, rule1, rule2, rule1p5, rule3, rule4, rule4p5, rule5, rule6);
+        allRules.setSpacing(10);
+        rulesBP.setCenter(allRules);
+        allRules.setAlignment(Pos.CENTER);
+
+        Scene rulesScene = new Scene(rulesBP, 690,600);
+
+        return rulesScene;
+    }
+}
