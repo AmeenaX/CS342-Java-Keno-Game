@@ -1,0 +1,227 @@
+import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
+import javafx.scene.control.ScrollPane;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.text.FontWeight;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
+
+
+public class OddsofWinning {
+	 
+	public Scene OddsofWinningScene(Stage primaryStage){
+		BorderPane root = new BorderPane();
+		root.setStyle(NewLook.BorderPaneBg);
+        
+		Text t1 = new Text("KENO");
+		t1.setFont(Font.font("Veneer Solid", FontWeight.EXTRA_BOLD, 100)); 
+		t1.setFill(NewLook.lightDark);
+		
+		Text t2 = new Text("ODDS OF WINNING");
+		t2.setFont(Font.font("", FontWeight.BOLD, 20));                     
+		t2.setFill(NewLook.TitleColor);
+		
+		VBox Heading = new VBox(t1, t2);
+		Heading.setAlignment(Pos.CENTER);
+		Heading.setSpacing(6);
+		
+        
+        String[][] TenOdds  = {{"10","$100,000"},{"9","$4,250"},{"8","$450"},{"7","$40"},{"6","$15"},{"5","$2"},{"0","$5"}};
+        String[][] NineOdds = {{"9","$30,000"},{"8","$3,000"},{"7","$150"},{"6","$25"},{"5","$6"},{"4","$1"}};
+        String[][] EightOdds = {{"8","$10,000"},{"7","$750"},{"6","$50"},{"5","$12"},{"4","$2"}};
+        String[][] SevenOdds = {{"7","$4,500"},{"6","$100"},{"5","$17"},{"4","$3"},{"3","$1"}};
+        String[][] SixOdds = {{"6","$1,100"},{"5","$50"},{"4","$8"},{"3","$1"}};
+        String[][] FiveOdds = {{"5","$420"},{"4","$18"},{"3","$2"}};
+        String[][] FourOdds = {{"4","$75"},{"3","$5"},{"2","$1"}};
+        String[][] ThreeOdds= {{"3","$27"},{"2","$2"}};
+        String[][] TwoOdds  = {{"2","$11"}};
+        String[][] OneOdds  = {{"1","$2"}};
+        String StyleSettings = NewLook.OddsTableCellStyle;
+        
+        VBox ten  = buildTable("★ 10 Spot Game",  TenOdds,  StyleSettings, "1 in 9.05");
+        VBox nine = buildTable("★ 9 Spot Game",   NineOdds, StyleSettings, "1 in 6.53");
+        VBox eight= buildTable("★ 8 Spot Game",   EightOdds,StyleSettings, "1 in 9.77");
+        VBox seven= buildTable("★ 7 Spot Game",   SevenOdds,StyleSettings, "1 in 4.23");
+        VBox six  = buildTable("★ 6 Spot Game",   SixOdds,  StyleSettings, "1 in 6.19");
+        VBox five = buildTable("★ 5 Spot Game",   FiveOdds, StyleSettings, "1 in 10.34");
+        VBox four = buildTable("★ 4 Spot Game",   FourOdds, StyleSettings, "1 in 3.86");
+        VBox three= buildTable("★ 3 Spot Game",   ThreeOdds,StyleSettings, "1 in 6.55");
+        VBox two  = buildTable("★ 2 Spot Game",   TwoOdds,  StyleSettings, "1 in 16.63");
+        VBox one  = buildTable("★ 1 Spot Game",   OneOdds,  StyleSettings, "1 in 4.00");
+
+        
+        
+       //Header Labels
+        Label MultiplierWins1 = new Label("★ Many Ways To Win with Multiplier");
+        MultiplierWins1.setMaxWidth(Double.MAX_VALUE);
+        MultiplierWins1.setAlignment(Pos.CENTER); 
+        MultiplierWins1.setTextFill(NewLook.TitleColor);
+        MultiplierWins1.setFont(Font.font("", FontWeight.BOLD, 18));
+        MultiplierWins1.setWrapText(true);
+        MultiplierWins1.setMaxWidth(820);
+        
+        
+        Text MultiplierWins2 = new Text("Keno is designed to let you pick the prize you want to play for. Just use the prize chart to decide what is fun and exciting for you. If you definitely want to play for $100,000, then you'll need to select a 10-spot. Play for $10 and that becomes $1,000,000. Add Multiplier and increase your prizes up to 10X. Maybe you are looking for the very best odds to win; that would be a 4-Spot. Check out a 6-Spot or a 7-Spot too. There are lots of great prizes to choose from. And there's more than just the top prize amount for each Spot option. A 9-Spot, for example, offers a prize for matching 4, 5, 6, 7, 8 or all 9 numbers played.");
+        MultiplierWins2.setTextAlignment(TextAlignment.CENTER);
+        MultiplierWins2.setWrappingWidth(820);
+        MultiplierWins2.setFill(NewLook.ContentTextColor);
+        
+        VBox MultiplierWins = new VBox(MultiplierWins1, MultiplierWins2);
+        MultiplierWins.setAlignment(Pos.CENTER);
+        
+        
+        Label MultiplierOdds = new Label("★ Multiplier Odds");
+        MultiplierOdds.setFont(Font.font("", FontWeight.BOLD, 18));
+        MultiplierOdds.setMaxWidth(Double.MAX_VALUE);
+        MultiplierOdds.setAlignment(Pos.CENTER); 
+        MultiplierOdds.setTextFill(NewLook.TitleColor);
+        MultiplierOdds.setWrapText(true);
+        MultiplierOdds.setMaxWidth(820);
+     
+        String[][] MutiplierOddsGrid = {
+                {"10X", "80"},
+                {"5X",  "26.67"},
+                {"4X",  "16"},
+                {"3X",  "16"},
+                {"2X",  "2.35"},
+                {"1X",  "2.5"}
+            };
+        
+        VBox MultiplierTable = buildMultiplierTable(MutiplierOddsGrid, StyleSettings);
+       
+       
+        Label DontForget1 = new Label("★ Don’t Forget");
+        DontForget1.setFont(Font.font("", FontWeight.BOLD, 18));
+        DontForget1.setMaxWidth(Double.MAX_VALUE);
+        DontForget1.setAlignment(Pos.CENTER); 
+        DontForget1.setTextFill(NewLook.TitleColor);
+        DontForget1.setWrapText(true);
+        DontForget1.setMaxWidth(820);
+       
+        Text DontForget2 = new Text("★ How much you can win is determined by how many Spots you choose and how much you choose to play.");
+        DontForget2.setTextAlignment(TextAlignment.CENTER);
+        DontForget2.setWrappingWidth(820);
+        DontForget2.setFill(NewLook.ContentTextColor);
+        
+        Text DontForget3 = new Text("★ A Keno ticket may be canceled at the location where it was purchased up to 6 seconds before the drawing time.");
+        DontForget3.setTextAlignment(TextAlignment.CENTER);
+        DontForget3.setWrappingWidth(820);
+        DontForget3.setFill(NewLook.ContentTextColor);
+
+        Text DontForget4 = new Text("★ The ticket, not the play slip is your proof of purchase. So be sure to verify your ticket and sign your ticket immediately.");
+        DontForget4.setTextAlignment(TextAlignment.CENTER);
+        DontForget4.setWrappingWidth(820);
+        DontForget4.setFill(NewLook.ContentTextColor);
+        
+        VBox DontForget = new VBox(DontForget1, DontForget2, DontForget3, DontForget4);
+        DontForget.setAlignment(Pos.CENTER);
+        HBox row1 = new HBox(ten, nine, eight);
+        row1.setAlignment(Pos.CENTER);
+        row1.setSpacing(24);
+		
+        HBox row2 = new HBox(seven, six, five);
+        row2.setAlignment(Pos.CENTER);
+        row2.setSpacing(24);
+		
+        HBox row3 = new HBox(four, three, two, one);
+        row3.setAlignment(Pos.CENTER);
+        row3.setSpacing(24);
+        
+        VBox row4 = new VBox(MultiplierWins, MultiplierOdds, MultiplierTable, DontForget);
+        row4.setAlignment(Pos.CENTER);
+        row4.setSpacing(24);
+        
+        VBox Blank1 = new VBox ();
+        VBox Blank2 = new VBox ();
+        VBox Blank3 = new VBox ();
+        VBox Blank4 = new VBox ();
+        VBox OddFields = new VBox(Heading, row1, row2, row3, row4, Blank1, Blank2, Blank3, Blank4);
+        OddFields.setAlignment(Pos.TOP_CENTER);
+        OddFields.setSpacing(20);
+        OddFields.setPadding(new Insets(10, 16, 16, 16));
+        
+        //scroll Ability
+        ScrollPane Scroll = new ScrollPane(OddFields);
+        Scroll.setFitToWidth(true);          
+        Scroll.setPannable(true);
+        root.setCenter(Scroll);
+        Scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        OddFields.setStyle("-fx-background-color: transparent;");
+        
+		Scene OddsofWinningScene = new Scene(root, 900, 600);
+        return OddsofWinningScene;
+		
+	}
+	
+	
+	
+	VBox buildTable(String title, String[][] data, String cellStyle, String OddsToWin) {
+		Label TileLabel = new Label(title);              
+		TileLabel.setTextFill(NewLook.ContentTextColor);    
+
+
+		Label HMatch = new Label("Match");
+		HMatch.setStyle(cellStyle);                
+		Label HPrize = new Label("Prize");
+		HPrize.setStyle(cellStyle);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(8);
+        grid.add(HMatch, 0, 0);
+        grid.add(HPrize, 1, 0);
+
+        for (int i = 0; i < data.length; i++) {
+            Label x = new Label(data[i][0]); x.setStyle(cellStyle);
+            Label y = new Label(data[i][1]); y.setStyle(cellStyle);
+            grid.add(x, 0, i + 1);
+            grid.add(y, 1, i + 1);
+        }
+        
+        Label OddsVal = new Label("Overall Odds: " + OddsToWin);
+        OddsVal.setTextFill(NewLook.ContentTextColor);
+        OddsVal.setMaxWidth(Double.MAX_VALUE);
+        
+        VBox table = new VBox(TileLabel, grid, OddsVal);
+        table.setAlignment(Pos.TOP_LEFT);
+        table.setSpacing(8);
+        return table;
+    }
+	
+	VBox buildMultiplierTable(String[][] data, String Style) {
+        Label Multiplier  = new Label("Multiplier"); 
+        Multiplier.setStyle(Style);
+        Label HoldsOdds = new Label("Odds 1 in");  
+        HoldsOdds.setStyle(Style);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(8);
+        grid.add(Multiplier,  0, 0);
+        grid.add(HoldsOdds, 1, 0);
+        
+       grid.setMaxWidth(Double.MAX_VALUE);
+        for (int i = 0; i < data.length; i++) {
+            Label mul  = new Label(data[i][0]); 
+            mul.setStyle(Style);
+            Label odds = new Label(data[i][1]); 
+            odds.setStyle(Style);
+            grid.add(mul,  0, i + 1);
+            grid.add(odds, 1, i + 1);
+        }
+        HBox wrapper = new HBox(grid);
+        wrapper.setAlignment(Pos.CENTER);
+        
+        VBox table = new VBox(wrapper);
+        table.setAlignment(Pos.CENTER);
+        table.setSpacing(8);
+        return table;
+    }
+}
