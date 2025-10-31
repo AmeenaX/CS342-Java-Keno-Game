@@ -1,0 +1,64 @@
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
+import javafx.scene.text.Text;
+
+public class Welcome{
+	
+	public Scene WelcomeScene(Stage primaryStage){
+		BorderPane root = new BorderPane();
+	
+		Label WelcomeText = new Label("Welcome to");
+		Label KenoText = new Label("KENO");
+		Button PlayButton = new Button("Play Now!");
+
+		NewMenu menu  = new NewMenu();
+		
+		VBox MENU = menu.createMenu(primaryStage);
+		MENU.setAlignment(Pos.CENTER_LEFT);
+		Text Empty = new Text("     ");
+		HBox MENUB = new HBox (MENU, Empty);
+		MENUB.setSpacing(690);
+        MENUB.setAlignment(Pos.CENTER_LEFT);
+        MENUB.setPadding(new Insets(10, 0, 0,  10));
+        MENU.setAlignment(Pos.TOP_LEFT);
+        MENU.setPadding(new Insets(7,7,7,7));
+		
+		VBox row1 = new VBox(MENU);
+		root.setTop(row1);
+		VBox.setMargin(MENU, new Insets(10));
+		row1.setAlignment(Pos.TOP_RIGHT);
+		
+		VBox row2 = new VBox(WelcomeText, KenoText, PlayButton);
+		row2.setAlignment(Pos.CENTER);
+		row2.setSpacing(0.005);
+		root.setCenter(row2);
+		root.setStyle(NewLook.BorderPaneBg);
+		
+		WelcomeText.setFont(Font.font("Veneer Solid", FontWeight.BOLD, 50));
+		KenoText.setFont(Font.font("Veneer Solid", FontWeight.EXTRA_BOLD, 142));
+        WelcomeText.setTextFill(NewLook.TitleColor);
+		KenoText.setTextFill(NewLook.lightDark);
+        PlayButton.setStyle(NewLook.ButttonBg + " -fx-font-size: 40px; -fx-font-weight: bold");
+		PlayButton.setPrefWidth(250);
+		PlayButton.setPrefHeight(100);
+
+
+	    PlayButton.setOnAction(e->{
+	    	NewMenu.showToggle = true; 
+	    	GamePlay GamePlay = new GamePlay();
+	    	primaryStage.setScene(GamePlay.GamePlayScene(primaryStage));
+	             
+	    });
+	    
+	    return new Scene(root, 690, 418);
+	}
+}
