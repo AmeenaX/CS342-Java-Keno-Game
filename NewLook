@@ -1,0 +1,88 @@
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
+public class NewLook {
+	
+	public static boolean isNew = false; 
+	
+	
+	public static String BorderPaneBg;
+	public static String ButttonBg;
+	public static String ButtonSelectedBg; 
+	public static Color TitleColor;
+	public static Font TitleFont;
+	public static Color lightDark; 
+	public static Color ContentTextColor; 
+	public static String OddsTableCellStyle;
+	
+
+	public static String MenuBarStyle; 
+	public static String ButtonAutoSelectBg; 
+	public static String ButtonAutoSelectBgSelected; 
+	public static String DrawMatchedBg; 
+	public static String DrawNotMatchedBg; 
+	public static String ResultsFieldStyle1; 
+	public static String ResultsFieldStyle2; 
+	public static String ResultsFieldStyle3;
+
+	static {
+		setOldLook();
+	}
+
+	public static void setOldLook() {
+		// oldlook
+		BorderPaneBg = "-fx-background-color: BEIGE;";
+    	ButttonBg = "-fx-background-color: #b5e6a6ff; -fx-text-fill: black;";
+    	ButtonSelectedBg = "-fx-background-color: #649560ff; -fx-text-fill: black;";
+    	TitleColor = Color.SEAGREEN;
+    	TitleFont = Font.font("Veneer Solid", FontWeight.EXTRA_BOLD, 100);
+    	lightDark = Color.LIGHTGREEN;
+    	ContentTextColor = Color.BLACK;
+    	OddsTableCellStyle = "-fx-padding: 4 10 4 10; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #649560ff; -fx-text-fill: black; -fx-background-color: #b5e6a6ff;";
+    	
+    	// Newlook
+    	MenuBarStyle = "-fx-background-color: #b5e6a6ff; -fx-selection-bar: #7eb26eff; -fx-base: #b5e6a6ff;";
+    	ButtonAutoSelectBg = "-fx-background-color: #d4f3cbff; -fx-text-fill: black;";
+    	ButtonAutoSelectBgSelected = "-fx-background-color: #6f9b6bff; -fx-text-fill: black;";
+    	DrawMatchedBg = "-fx-background-color: #bafc2cff; -fx-text-fill: black;";
+    	DrawNotMatchedBg = "-fx-background-color: #ffffffff; -fx-border-color: #bafc2cff; -fx-text-fill: black;"; 
+    	ResultsFieldStyle1 = "-fx-text-inner-color: #649560ff; -fx-background-color: #b5e6a6ff;";
+    	ResultsFieldStyle2 = "-fx-text-inner-color: #649560ff; -fx-background-color: #13250eff;"; 
+    	ResultsFieldStyle3 = "-fx-text-inner-color: #649560ff; -fx-background-color: #cae0c3ff;";
+	}
+	
+	public static void setNewLook() {
+		// oldlook
+		BorderPaneBg = "-fx-background-color: #2D5128;"; 
+        ButttonBg = "-fx-background-color: #142C14; -fx-text-fill: BEIGE;";
+        ButtonSelectedBg = "-fx-background-color: #b5e6a6ff; -fx-text-fill: black;"; 
+        TitleColor = Color.DARKSEAGREEN;
+        TitleFont = Font.font("Veneer Solid", FontWeight.EXTRA_BOLD, 100);
+        lightDark = Color.SEAGREEN; 
+        ContentTextColor = Color.BEIGE;
+        OddsTableCellStyle = "-fx-padding: 4 10 4 10; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #b5e6a6ff; -fx-text-fill: BEIGE; -fx-background-color: #142C14;";
+        MenuBarStyle = "-fx-background-color: #142C14; -fx-selection-bar: #b5e6a6ff; -fx-base: #142C14;";
+        ButtonAutoSelectBg = "-fx-background-color: #b5e6a6ff; -fx-text-fill: black;"; 
+        ButtonAutoSelectBgSelected = "-fx-background-color: #142C14; -fx-text-fill: BEIGE;";
+        DrawMatchedBg = "-fx-background-color: #bafc2cff; -fx-text-fill: black;";
+        DrawNotMatchedBg = "-fx-background-color: #4a6947; -fx-border-color: #bafc2cff; -fx-text-fill: BEIGE;"; 
+        ResultsFieldStyle1 = "-fx-text-inner-color: #b5e6a6ff; -fx-background-color: #142C14;";
+        ResultsFieldStyle2 = "-fx-text-inner-color: #b5e6a6ff; -fx-background-color: #13250eff;";
+        ResultsFieldStyle3 = "-fx-text-inner-color: #142C14; -fx-background-color: #b5e6a6ff;";
+	}
+
+	
+    public static void toggle() {
+    	isNew = !isNew;
+    	if(isNew) {
+    		setNewLook();
+    	} else {
+    		setOldLook();
+        }
+    }
+    
+    public static boolean isNewLook() {
+    	return isNew;
+    }
+}
