@@ -1,0 +1,25 @@
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.geometry.Pos;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
+public class Exit {
+    public Scene ExitScene(Stage primaryStage){
+        BorderPane exitBP = new BorderPane();
+        Text bye = new Text ("Good Bye!");
+        VBox byeBox = new VBox(bye);
+        exitBP.setCenter(byeBox);
+        byeBox.setAlignment(Pos.CENTER);
+        bye.setFont(Font.font("", FontWeight.EXTRA_BOLD,100
+        ));
+        bye.setFill(NewLook.lightDark);
+        exitBP.setStyle(NewLook.BorderPaneBg);
+        Scene exitScene = new Scene(exitBP, 500,500);
+        primaryStage.close();
+        return exitScene;
+    }
+}
