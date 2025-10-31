@@ -1,0 +1,718 @@
+import java.util.Random;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.scene.paint.Color;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.geometry.Pos;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.Node;
+import javafx.scene.control.TextArea;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+
+
+public class GamePlay {
+
+    boolean spotChosen = false; // for checking that spots and draws are chosen
+    boolean drawChosen = false;
+    int maxChosenSpots = 0; // for making sure spots and draws are withing limits
+    int maxDraws = 0;
+    int numChosenSpots = 0; // calculating how many spots and draws have been done so far
+    int numDraws = 0;
+    boolean autoSelected = false; // checking if user does/doesn't select
+    Button[][] allNumbers = new Button[8][10];
+    int numMatches = 0; // counts users' wins
+    String numsMatched = "";
+    int totalWon = 0;
+    int totalWonRound = 0;
+
+
+  
+    public String dollarSign(int money){
+        return "$"+Integer.toString(money);
+    }
+
+    public int[] randTwenty(){
+        int[] twentyNums = new int[20];
+            Random rand = new Random();
+            Boolean isUnique;
+            for(int i = 0; i < 20; ++i){
+                twentyNums[i] = rand.nextInt(80 - 1 + 1) + 1;
+                do{
+                    isUnique = true;
+                    for(int j = 0; j < i; ++j){
+                        if(twentyNums[i] == twentyNums[j]){
+                            isUnique = false;
+                            twentyNums[i] = rand.nextInt(80 - 1 +1) + 1;
+                            break;
+                        }
+                    }
+                }while(!isUnique);
+            }
+        return twentyNums;
+    }
+
+
+    public int[] findRandSpots(int maxChosenSpots){
+        int[] randSpots = new int[maxChosenSpots];
+                Random rand = new Random();
+                Boolean isUnique;
+                // choose numbers
+                for(int i = 0; i < maxChosenSpots; ++i){
+                    randSpots[i] = rand.nextInt(80 - 1 + 1) + 1;
+                    do{
+                        isUnique = true;
+                        for(int j = 0; j < i; ++j){
+                            if(randSpots[i] == randSpots[j]){
+                                isUnique = false;
+                                randSpots[i] = rand.nextInt(80 - 1 +1) + 1;
+                                break;
+                            }
+                        }
+                    }while(!isUnique);
+                }
+        return randSpots;
+    }
+
+    // money: conditions for winning certain amount
+    public int money(int spot, int matches){
+        switch(spot) {
+            case 1:
+                switch(matches){
+                    case 1: return 2;
+                    default: return 0;
+                }
+            case 4:
+                switch(matches){
+                    case 2: return 1;
+                    case 3: return 5;
+                    case 4: return 75;
+                    default: return 0;
+
+                }
+            case 8:
+                switch(matches){
+                    case 4: return 2;
+                    case 5: return 12;
+                    case 6: return 50;
+                    case 7: return 750;
+                    case 8: return 10000;
+                    default: return 0;
+                }
+            default:
+                switch(matches){
+                    case 0: return 5;
+                    case 5: return 2;
+                    case 6: return 15;
+                    case 7: return 40;
+                    case 8: return 450;
+                    case 9: return 4250;
+                    case 10: return 100000;
+                    default: return 0;
+                }
+        }
+
+    }
+
+    // GamePlayScene: changes scene to new game
+    public Scene GamePlayScene(Stage primaryStage){
+        BorderPane gamePlayBP;
+        // draw and ready buttons
+        Button draw = new Button("Draw!");
+        Button ready = new Button("Ready!");
+        draw.setStyle(NewLook.ButttonBg);
+        ready.setStyle(NewLook.ButttonBg);
+        draw.setPrefWidth(150);
+        ready.setPrefWidth(150);
+        draw.setPrefHeight(38);
+        ready.setPrefHeight(38);
+        draw.setDisable(true);
+        ready.setDisable(true);
+
+        //for displaying fails/extra intstructions
+        Text failMessage = new Text("");
+        failMessage.setFont(Font.font("Stylus", FontWeight.BOLD,14));
+
+
+        // going to be used by nodes
+        EventHandler<ActionEvent> returnNodes;
+        // event for nodes
+        returnNodes = (ActionEvent event) -> {
+            Button b = (Button) event.getSource();
+            if(b.getStyle().contains(NewLook.ButttonBg)){
+                numChosenSpots++;
+                if(numChosenSpots == maxChosenSpots){
+                    b.setStyle(NewLook.ButtonSelectedBg);
+                    draw.setDisable(false);
+                    failMessage.setText("All spots have been chosen! Now ready for drawing(s).");
+                    failMessage.setFill(Color.GREEN);
+                }
+                else if(numChosenSpots < maxChosenSpots){
+                    b.setStyle(NewLook.ButtonSelectedBg);
+                    failMessage.setText("");
+                    draw.setDisable(true);
+                }
+                else if(numChosenSpots > maxChosenSpots){
+                    failMessage.setText("You have chosen the maximum amount of spots!\n" + //
+                            "Press 'Draw!' or deselect numbers to make changes.");
+                    numChosenSpots--;
+                    failMessage.setFill(Color.RED);
+                }
+            }
+            else if(b.getStyle().contains(NewLook.ButtonSelectedBg)){
+                b.setStyle(NewLook.ButttonBg);
+                numChosenSpots--;
+                if(numChosenSpots == maxChosenSpots){
+                    draw.setDisable(false);
+                    failMessage.setText("All spots have been chosen. Now ready for drawing(s).");
+                    failMessage.setFill(Color.GREEN);
+                    
+                }
+                else if(numChosenSpots < maxChosenSpots){
+                    draw.setDisable(true);
+                    failMessage.setText("");
+                }
+                else if(numChosenSpots > maxChosenSpots){
+                    failMessage.setText("You have chosen the maximum amount of spots!\nPress 'Draw!' or deselect numbers to make changes.");
+                    failMessage.setFill(Color.RED);
+                }
+            }
+        };
+
+
+        NewMenu menuB = new NewMenu();
+        NewMenu.showToggle = true;
+        VBox menuBar = menuB.createMenu(primaryStage);
+
+        // title and instructions
+        Label gridLabel = new Label("Your Bet Card");
+        gridLabel.setFont(Font.font("Stylus",FontWeight.EXTRA_BOLD,20));
+        Text instructions = new Text("Select how many spots and draws you want.");
+        Text instructions2 = new Text("Choose 'Auto Select' if you want the computer to choose your spots.");
+        failMessage.setText("Press 'Ready!' when you are done.");
+       
+        gridLabel.setTextFill(NewLook.ContentTextColor);
+        instructions.setFill(NewLook.ContentTextColor);
+        instructions2.setFill(NewLook.ContentTextColor);
+        failMessage.setFill(NewLook.ContentTextColor);
+        
+        instructions.setFont(Font.font("Stylus", 15));
+        instructions2.setFont(Font.font("Stylus", 15));
+        
+        
+        
+        // 80 buttons
+        GridPane gridPane = new GridPane();
+        for(int i = 0; i < 10; i++){ // column width
+            gridPane.getColumnConstraints().add(new ColumnConstraints(35));
+        }
+        for(int i = 0; i < 8; i++){ // row height
+            gridPane.getRowConstraints().add(new javafx.scene.layout.RowConstraints(35));
+        }
+        int n = 1;
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 10; j++){
+                Button node = new Button (n + "");
+                node.setStyle(NewLook.ButttonBg);
+                node.setPrefWidth(200);
+                node.setPrefHeight(200);
+                node.setOnAction(returnNodes);
+                allNumbers[i][j] = node;
+                gridPane.add(node, j, i);
+                n++;
+            }
+        }
+        gridPane.setMaxWidth(Double.MAX_VALUE);
+        gridPane.setMaxHeight(Double.MAX_VALUE);
+        gridPane.setHgap(5);
+        gridPane.setVgap(5);
+        gridPane.setDisable(true);
+        gridPane.setOpacity(1.0);
+        for(Node node:gridPane.getChildren()){
+            node.setOpacity(1.0);
+        }
+        
+        // spots buttons
+        Label spotLabel = new Label("Number\n of Spots");
+        spotLabel.setFont(Font.font("Stylus",FontWeight.EXTRA_BOLD,14));
+        Button oneSpot = new Button("1");
+        Button fourSpot = new Button("4");
+        Button eightSpot = new Button("8");
+        Button tenSpot = new Button("10");
+        Button autoSpot = new Button("  Auto Select");
+        
+        
+        spotLabel.setTextFill(NewLook.ContentTextColor);
+        oneSpot.setStyle(NewLook.ButttonBg);
+        fourSpot.setStyle(NewLook.ButttonBg);
+        eightSpot.setStyle(NewLook.ButttonBg);
+        tenSpot.setStyle(NewLook.ButttonBg);
+        autoSpot.setStyle(NewLook.ButtonAutoSelectBg);
+       
+        oneSpot.setPrefWidth(41);
+        oneSpot.setPrefHeight(41);
+        fourSpot.setPrefWidth(41);
+        fourSpot.setPrefHeight(41);
+        eightSpot.setPrefWidth(41);
+        eightSpot.setPrefHeight(41);
+        tenSpot.setPrefWidth(41);
+        tenSpot.setPrefHeight(41);
+        autoSpot.setPrefWidth(119);
+        autoSpot.setPrefHeight(55);
+
+        // draws buttons
+        Label drawLabel = new Label("Number\n of Draws");
+        drawLabel.setFont(Font.font("Stylus",FontWeight.EXTRA_BOLD,14));
+        Button oneDraw = new Button ("1");
+        Button twoDraw = new Button ("2");
+        Button threeDraw = new Button ("3");
+        Button fourDraw = new Button ("4");
+        
+        drawLabel.setTextFill(NewLook.ContentTextColor);
+        oneDraw.setStyle(NewLook.ButttonBg);
+        twoDraw.setStyle(NewLook.ButttonBg);
+        threeDraw.setStyle(NewLook.ButttonBg);
+        fourDraw.setStyle(NewLook.ButttonBg);
+        
+        oneDraw.setPrefWidth(41);
+        oneDraw.setPrefHeight(41);
+        twoDraw.setPrefWidth(41);
+        twoDraw.setPrefHeight(41);
+        threeDraw.setPrefWidth(41);
+        threeDraw.setPrefHeight(41);
+        fourDraw.setPrefWidth(41);
+        fourDraw.setPrefHeight(41);
+
+
+        // display buttons and text
+        gamePlayBP = new BorderPane();
+        gamePlayBP.setStyle(NewLook.BorderPaneBg);
+        
+        VBox allInstructions = new VBox(instructions,instructions2);
+        allInstructions.setSpacing(1);
+        allInstructions.setAlignment(Pos.CENTER);
+        VBox gridAndTextBox = new VBox(gridLabel, allInstructions,failMessage);
+        Text KenoText = new Text("KENO");
+        HBox menuBox = new HBox(menuBar, KenoText);
+        menuBox.setSpacing(780);
+        KenoText.setFont(Font.font("Veneer Solid", FontWeight.EXTRA_BOLD, 37)); 
+        KenoText.setFill(NewLook.lightDark);
+        
+        VBox spotBox = new VBox(spotLabel, oneSpot, fourSpot, eightSpot, tenSpot);
+        VBox drawBox = new VBox(drawLabel, oneDraw, twoDraw, threeDraw, fourDraw);
+        HBox drawsAndSpotsBox = new HBox(spotBox, drawBox);
+        VBox sdautoBox = new VBox(drawsAndSpotsBox,autoSpot);
+        HBox readyDrawBox= new HBox(draw,ready);
+
+        Label YouMatched = new Label("You Matched");
+    	Label Numbers = new Label("Number(s)");
+    	Label NumYouMatched = new Label("Numbers You Matched:");
+    	Label TotalWon = new Label("Drawing Total:");
+        Label OverallWon = new Label("Grand Total Won:");
+        
+        TextField NumofMatches = new TextField("-");
+        NumofMatches.setFont(Font.font("Stylus", FontWeight.EXTRA_BOLD, 29));
+       
+        NumofMatches.setStyle(NewLook.ResultsFieldStyle1);
+        NumofMatches.setMaxWidth(68);
+        NumofMatches.setMaxHeight(50);
+        NumofMatches.setEditable(false);
+        TextArea allNumMatched = new TextArea("");
+        allNumMatched.setFont(Font.font("Stylus", FontWeight.EXTRA_BOLD, 17));
+        
+        allNumMatched.setStyle(NewLook.ResultsFieldStyle2);
+        allNumMatched.setMaxWidth(70);
+        allNumMatched.setMaxHeight(80);
+        allNumMatched.setWrapText(true);
+        allNumMatched.setEditable(false);
+        
+        TextField AmountWon = new TextField("$--");
+        AmountWon.setFont(Font.font("Stylus", FontWeight.EXTRA_BOLD, 29));
+        AmountWon.setStyle(NewLook.ResultsFieldStyle1);
+        AmountWon.setMaxWidth(190);
+        AmountWon.setMaxHeight(50);
+        AmountWon.setEditable(false);
+        
+        TextField oAmountWon = new TextField("$"+Integer.toString(totalWon));
+        oAmountWon.setFont(Font.font("Stylus", FontWeight.EXTRA_BOLD, 29));
+        
+        oAmountWon.setStyle(NewLook.ResultsFieldStyle3);
+        oAmountWon.setMaxWidth(190);
+        oAmountWon.setMaxHeight(50);
+        oAmountWon.setEditable(false);
+        TextField[] Matches = new TextField[10];
+    	for (int i = 0; i < Matches.length; i++) {
+    		Matches[i] = new TextField();
+    		Matches[i].setEditable(false);
+        }
+        YouMatched.setFont(Font.font("Stylus", FontWeight.BOLD, 14));
+        Numbers.setFont(Font.font("Stylus", FontWeight.BOLD, 14));
+        NumYouMatched.setFont(Font.font("Stylus", FontWeight.BOLD, 14));
+        TotalWon.setFont(Font.font("Stylus", FontWeight.BOLD, 14));
+        OverallWon.setFont(Font.font("Stylus", FontWeight.BOLD, 14));
+        
+        YouMatched.setTextFill(NewLook.ContentTextColor);
+        Numbers.setTextFill(NewLook.ContentTextColor);
+        NumYouMatched.setTextFill(NewLook.ContentTextColor);
+        TotalWon.setTextFill(NewLook.ContentTextColor);
+        OverallWon.setTextFill(NewLook.ContentTextColor);
+        
+        VBox youMatched = new VBox(YouMatched, NumofMatches, Numbers);
+        VBox NumsMatched = new VBox(NumYouMatched, allNumMatched);
+        VBox moneyWon = new VBox(TotalWon,AmountWon);
+        VBox oMoneyWon = new VBox(OverallWon,oAmountWon);
+        VBox allResults = new VBox (youMatched, NumsMatched, moneyWon, oMoneyWon);
+        
+        gamePlayBP.setLeft(allResults);
+        youMatched.setAlignment(Pos.CENTER);
+        NumsMatched.setAlignment(Pos.CENTER);
+        moneyWon.setAlignment(Pos.CENTER);
+        oMoneyWon.setAlignment(Pos.CENTER);
+        allResults.setAlignment(Pos.CENTER);
+        allResults.setSpacing(15);
+        allResults.setPadding(new Insets(140,0,0,10));
+    	AmountWon.setEditable(false);
+        gamePlayBP.setTop(menuBox);
+        menuBar.setAlignment(Pos.CENTER);
+        menuBox.setAlignment(Pos.CENTER_LEFT);
+        menuBox.setPadding(new Insets(10, 0, 0,  10));
+        gridLabel.setAlignment(Pos.TOP_CENTER);
+        menuBar.setAlignment(Pos.TOP_LEFT);
+        menuBar.setPadding(new Insets(7,7,7,7));
+        gridAndTextBox.getChildren().add(gridPane);
+        gridPane.setAlignment(Pos.CENTER);
+        gridAndTextBox.setSpacing(40);
+        gamePlayBP.setRight(sdautoBox);
+        sdautoBox.setAlignment(Pos.CENTER);
+        sdautoBox.setPadding(new Insets(100,0,0,0));
+        spotBox.setAlignment(Pos.CENTER);
+        spotBox.setPrefWidth(75);
+        spotBox.setPadding(new Insets(90,0,10,0));
+        spotBox.setSpacing(10);
+        drawBox.setAlignment(Pos.CENTER);
+        drawBox.setPrefWidth(75);
+        drawsAndSpotsBox.setSpacing(0);
+        drawBox.setPadding(new Insets(90,0,10,0));
+        drawBox.setSpacing(10);
+        gamePlayBP.setCenter(gridAndTextBox);
+        gridAndTextBox.setAlignment(Pos.CENTER);
+        gridAndTextBox.setMaxWidth(Double.MAX_VALUE);
+        gamePlayBP.setBottom(readyDrawBox);
+        readyDrawBox.setAlignment(Pos.CENTER);
+        readyDrawBox.setSpacing(10);
+        readyDrawBox.setPadding(new Insets(10,10,10,65));
+
+
+        // button actions
+        oneSpot.setOnAction(e-> {
+            oneSpot.setStyle(NewLook.ButtonSelectedBg);
+            fourSpot.setStyle(NewLook.ButttonBg);
+            eightSpot.setStyle(NewLook.ButttonBg);
+            tenSpot.setStyle(NewLook.ButttonBg);
+            spotChosen = true;
+            maxChosenSpots = 1;
+            if(spotChosen && drawChosen){
+                ready.setDisable(false);
+            }
+        });
+
+        fourSpot.setOnAction(e-> {
+            oneSpot.setStyle(NewLook.ButttonBg);
+            fourSpot.setStyle(NewLook.ButtonSelectedBg);
+            eightSpot.setStyle(NewLook.ButttonBg);
+            tenSpot.setStyle(NewLook.ButttonBg);
+            spotChosen = true;
+            maxChosenSpots = 4;
+            if(spotChosen && drawChosen){
+                ready.setDisable(false);
+            }
+        });
+        
+        
+        eightSpot.setOnAction(e-> {
+            oneSpot.setStyle(NewLook.ButttonBg);
+            fourSpot.setStyle(NewLook.ButttonBg);
+            eightSpot.setStyle(NewLook.ButtonSelectedBg);
+            tenSpot.setStyle(NewLook.ButttonBg);
+            spotChosen = true;
+            maxChosenSpots = 8;
+            if(spotChosen && drawChosen){
+                ready.setDisable(false);
+            }
+        });
+
+        tenSpot.setOnAction(e-> {
+            oneSpot.setStyle(NewLook.ButttonBg);
+            fourSpot.setStyle(NewLook.ButttonBg);
+            eightSpot.setStyle(NewLook.ButttonBg);
+            tenSpot.setStyle(NewLook.ButtonSelectedBg);
+            spotChosen = true;
+            maxChosenSpots = 10;
+            if(spotChosen && drawChosen){
+                ready.setDisable(false);
+            }
+        });
+
+        autoSpot.setOnAction(e-> {
+        	if(autoSpot.getStyle().equals(NewLook.ButtonAutoSelectBgSelected)){
+                autoSpot.setStyle(NewLook.ButtonAutoSelectBg);
+                autoSelected  = false;
+            }
+            else{
+                autoSpot.setStyle(NewLook.ButtonAutoSelectBgSelected);
+                autoSelected = true;
+            }
+        });
+
+        oneDraw.setOnAction(e->{
+        	oneDraw.setStyle(NewLook.ButtonSelectedBg);
+            twoDraw.setStyle(NewLook.ButttonBg);
+            threeDraw.setStyle(NewLook.ButttonBg);
+            fourDraw.setStyle(NewLook.ButttonBg);
+            drawChosen = true;
+            maxDraws = 1;
+            if(spotChosen && drawChosen){
+                ready.setDisable(false);
+            }
+        });
+
+        twoDraw.setOnAction(e->{
+        	oneDraw.setStyle(NewLook.ButttonBg);
+            twoDraw.setStyle(NewLook.ButtonSelectedBg);
+            threeDraw.setStyle(NewLook.ButttonBg);
+            fourDraw.setStyle(NewLook.ButttonBg);
+            drawChosen = true;
+            maxDraws = 2;
+            if(spotChosen && drawChosen){
+                ready.setDisable(false);
+            }
+        });
+
+        threeDraw.setOnAction(e->{
+        	oneDraw.setStyle(NewLook.ButttonBg);
+            twoDraw.setStyle(NewLook.ButttonBg);
+            threeDraw.setStyle(NewLook.ButtonSelectedBg);
+            fourDraw.setStyle(NewLook.ButttonBg);
+            drawChosen = true;
+            maxDraws = 3;
+            if(spotChosen && drawChosen){
+                ready.setDisable(false);
+            }
+        });
+
+        fourDraw.setOnAction(e->{
+        	oneDraw.setStyle(NewLook.ButttonBg);
+            twoDraw.setStyle(NewLook.ButttonBg);
+            threeDraw.setStyle(NewLook.ButttonBg);
+            fourDraw.setStyle(NewLook.ButtonSelectedBg);
+            drawChosen = true;
+            maxDraws = 4;
+            if(spotChosen && drawChosen){
+                ready.setDisable(false);
+            }
+        });
+
+        ready.setOnAction(e-> {
+        	ready.setStyle(NewLook.ButtonSelectedBg);
+            ready.setDisable(true);
+            
+            oneSpot.setDisable(true);
+            fourSpot.setDisable(true);
+            eightSpot.setDisable(true);
+            tenSpot.setDisable(true);
+            autoSpot.setDisable(true);
+            oneDraw.setDisable(true);
+            twoDraw.setDisable(true);
+            threeDraw.setDisable(true);
+            fourDraw.setDisable(true);
+            if(ready.getText().equals("Exit")){
+                Exit exit = new Exit();
+                primaryStage.setScene(exit.ExitScene(primaryStage));
+            }
+            if(autoSelected == false){
+                instructions.setText("Choose your numbers according to your selected spots. Select 'Draw!' when you are done.");
+                instructions2.setText("");
+                failMessage.setText("");
+                gridPane.setDisable(false);
+                gridPane.setOpacity(1.0);
+                for(Node node:gridPane.getChildren()){
+                    node.setOpacity(1.0);
+                }
+            }
+            else{
+                instructions.setText("Auto-select chosen");
+                instructions2.setText("");
+                failMessage.setText("The computer is choosing your numbers...");
+                failMessage.setFill(Color.GREEN);
+                int[] randSpots = findRandSpots(maxChosenSpots);
+                
+                int numSeconds = 1;
+                int wait = maxChosenSpots +1;
+                PauseTransition pauseButton = new PauseTransition(Duration.seconds(wait));
+                pauseButton.setOnFinished(f->{
+                    draw.setDisable(false);
+                    failMessage.setText("The computer has chosen your numbers! Press 'Draw!'");
+                    failMessage.setFill(Color.GREEN);
+                });
+                pauseButton.play();
+
+                // choose on board
+                for(Node node : gridPane.getChildren()){
+                    Button currButton = (Button) node;
+                    for(int i = 0; i < maxChosenSpots; ++i){
+                        if(currButton.getText().equals(Integer.toString(randSpots[i]))){
+                            PauseTransition thisPause = new PauseTransition(Duration.seconds(numSeconds++));
+                            thisPause.setOnFinished(f->{
+                            	currButton.setStyle(NewLook.ButtonSelectedBg);
+                                draw.setDisable(true);
+                            });
+                            thisPause.play();
+                            
+                        }
+                    }
+                }
+
+                draw.setDisable(false);
+
+
+            }
+            
+        });
+
+        draw.setOnAction(e->{
+            gridPane.setDisable(true);
+            gridPane.setOpacity(1.0);
+            totalWonRound = 0;
+            numMatches = 0;
+            numsMatched = "";
+            failMessage.setText("");
+            totalWonRound = 0;
+            NumofMatches.setText("--");
+            allNumMatched.setText("");
+            oAmountWon.setText(dollarSign(totalWon));
+            AmountWon.setText("$--");
+
+            
+            for(Node node:gridPane.getChildren()){
+                node.setOpacity(1.0);
+            }
+            gridPane.setOpacity(100);
+            
+            if(draw.getText().equals("Play Again")){
+                GamePlay GamePlay = new GamePlay();
+                primaryStage.setScene(GamePlay.GamePlayScene(primaryStage));
+            }
+            else{
+                numDraws++;
+                if(numDraws >= maxDraws){
+                    draw.setDisable(true);
+                    instructions.setText("Drawing...");
+                    instructions2.setText("");
+                    failMessage.setText("Last draw. No more draws remaining.");
+                    failMessage.setFill(Color.RED);
+                    draw.setText("Play Again");
+                    draw.setStyle(NewLook.ButtonAutoSelectBg);
+                    draw.setDisable(false);
+                    ready.setText("Exit");
+                    ready.setStyle(NewLook.ButttonBg);
+                    ready.setDisable(false);
+                }
+                else{
+                    instructions.setText("Drawing...");
+                    instructions2.setText("Press 'Continue' to proceed to next draw.");
+                    draw.setText("Continue");
+                }
+
+                // get 20 random numbers
+                int[] twentyNums = randTwenty();
+               
+                // clear last drawing
+                for(Node node : gridPane.getChildren()){
+                    Button currButton = (Button) node;
+
+                    if(currButton.getStyle().equals(NewLook.DrawMatchedBg)){
+                        currButton.setStyle(NewLook.ButtonSelectedBg);
+                    }
+                    else if(currButton.getStyle().equals(NewLook.DrawNotMatchedBg)){
+                        currButton.setStyle(NewLook.ButttonBg);
+                    }
+                }
+
+                int numSeconds = 1;
+                PauseTransition pauseResults = new PauseTransition(Duration.seconds(21));
+                pauseResults.setOnFinished(f->{
+                    //update/display counters
+                    totalWonRound = money(maxChosenSpots,numMatches);
+                    totalWon += totalWonRound;
+                    oAmountWon.setText(dollarSign(totalWon));
+                    AmountWon.setText(dollarSign(totalWonRound));
+                    draw.setDisable(false);
+                    NumofMatches.setText(Integer.toString(numMatches));
+                    allNumMatched.setText(numsMatched);
+        
+                });
+                pauseResults.play();
+                
+                // fill in 20 random nodes
+                for(Node node : gridPane.getChildren()){
+                    Button currButton = (Button) node;
+                    for(int i = 0; i < 20; ++i){
+                        if(currButton.getText().equals(Integer.toString(twentyNums[i]))){
+                            
+                        	if(currButton.getStyle().equals(NewLook.ButtonSelectedBg)){
+                                numMatches++;
+                                if(numMatches == 1){
+                                    numsMatched = Integer.toString(twentyNums[i]);
+                                }
+                                else{
+                                    numsMatched = numsMatched + "\n" + Integer.toString(twentyNums[i]);
+                                }
+                                
+
+                                PauseTransition currPause = new PauseTransition(Duration.seconds(numSeconds++));
+                                currPause.setOnFinished(f->{
+                                	currButton.setStyle(NewLook.DrawMatchedBg);
+                                    draw.setDisable(true);
+                                });
+                                currPause.play();
+
+                            }
+                            else{
+                                PauseTransition currPause2 = new PauseTransition(Duration.seconds(numSeconds++));
+                                currPause2.setOnFinished(f->{
+                                	currButton.setStyle(NewLook.DrawNotMatchedBg);
+                                    draw.setDisable(true);
+                                });
+                                currPause2.play();
+                                
+                                
+                            }
+                        }
+                        
+                    }
+                }
+
+                
+
+
+                }
+        });
+        
+        
+        Scene gamePlayScene = new Scene(gamePlayBP, 980,650);
+        
+        return gamePlayScene;
+    }
+}
