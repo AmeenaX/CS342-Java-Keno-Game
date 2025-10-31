@@ -1,0 +1,81 @@
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class NewMenu {
+	public static boolean showToggle = false;
+	
+    Stage otherStage = new Stage();
+    
+    // createMenu: creates menu
+    public VBox createMenu(Stage primaryStage){
+        
+        Menu menu = new Menu("Menu");
+        menu.setStyle(NewLook.MenuBarStyle);
+
+        MenuItem rules = new MenuItem("Rules");
+        MenuItem odds = new MenuItem("Odds of Winning");
+        MenuItem exit = new MenuItem("Exit");
+
+        // menu items depend on where menu is
+        if(showToggle){
+        	MenuItem newLook = new MenuItem();
+            if (NewLook.isNewLook()) {
+            	newLook.setText("Old Look");
+            } else {
+            	newLook.setText("New Look");
+            }
+            
+            menu.getItems().add(rules);
+            menu.getItems().add(odds);
+            menu.getItems().add(exit);
+            menu.getItems().add(newLook);
+            
+            newLook.setOnAction(e->{
+            NewLook.toggle();
+            GamePlay newGame = new GamePlay();
+            primaryStage.setScene(newGame.GamePlayScene(primaryStage));
+            });
+        }
+        else{
+            menu.getItems().add(rules);
+            menu.getItems().add(odds);
+            menu.getItems().add(exit);
+        }
+
+        // actions for each menu item
+        rules.setOnAction(e->{
+            Rules rulesAct = new Rules();
+            otherStage.setScene(rulesAct.RulesScene(otherStage));
+            otherStage.setTitle("Keno Rules");
+            otherStage.show();
+        });
+        odds.setOnAction(e->{
+            OddsofWinning oddsofWinning = new OddsofWinning();
+        	otherStage.setScene(oddsofWinning.OddsofWinningScene(otherStage));
+            otherStage.setTitle("Keno Odds of Winning");
+            otherStage.show();
+        });
+        exit.setOnAction(e->{
+            Exit exitAct = new Exit();
+            otherStage.setScene(exitAct.ExitScene(primaryStage));
+            otherStage.setTitle("Exitting Keno...");
+            otherStage.show();
+        });
+        
+
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().add(menu);
+        menuBar.setMaxWidth(70);
+        menuBar.setStyle(NewLook.MenuBarStyle);
+
+        VBox wholeMenu = new VBox(menuBar);
+
+        return wholeMenu;
+    }
+
+    
+
+}
